@@ -34,6 +34,8 @@ module.exports.testJwt = koaJwt({
 });
 
 // 返回token
-// module.exports.verify = function(){
-//   let token = auth.s
-// }
+module.exports.verify = function(auth) {
+  let token = auth.substring( auth.indexOf(' ')+1)
+  console.log(token);
+  return jwt.verify(token, secret)
+}
