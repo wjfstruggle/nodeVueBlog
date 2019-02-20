@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const userRouter = new Router();
-const { User } = require('../db/index');
+const { User, Arcticle } = require('../db/index');
 const {getToken, verify} = require('../middleware/getcookie');
 
 // 前缀
@@ -55,5 +55,48 @@ userRouter
       }
     }
 })
-
+// 发表的文章渲染
+.get('/findAll', async (ctx) => {
+  var result = await Arcticle.find({})
+   .select('-__v')
+    ctx.body = {
+      msg: '查询成功',
+      result
+    }
+})
+// 根据_id选择编辑文章
+.get('/findSelect', async (ctx) => {
+  var { _id , title, md_value } = ctx.request.query;
+  var result = await Arcticle.findByIdAndUpdate(_id, {
+    title,
+    md_value
+  })
+   .select('-__v')
+  if (result) {
+    ctx.body = {
+      msg: '编辑成功',
+      result
+    }
+  }
+})
+// 更新文章编辑
+.get('/updateArcticle', async (ctx) => {
+  var { _id , title, md_value, updatedTime } = ctx.request.query;
+  var result = await Arcticle.findByIdAndUpdate(_id, {
+    title,
+    md_value,
+    updatedTime
+  })
+  if (result) {
+    ctx.body = {
+      msg: '更新成功',
+      result
+    }
+  } else {
+    ctx.body = {
+      msg: '更新失败',
+      result
+    }
+  }
+})
 module.exports = userRouter

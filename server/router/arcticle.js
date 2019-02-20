@@ -6,14 +6,15 @@ const {
   User
 } = require('../db/index');
 const {
-  verify
+  verify,
+  errorHandle
 } = require('../middleware/getcookie')
 
 ArcticleRouter.prefix('/arcticle'); // 前缀
 
 ArcticleRouter
   .post('/submit', async (ctx) => {
-    let { md_value } = ctx.request.body;
+    let { md_value,title,createdTime,updatedTime } = ctx.request.body;
     let {
       id
     } = verify(ctx.header.authorization);
@@ -21,8 +22,11 @@ ArcticleRouter
     var user = await User.findById(id).select('-password -__v');
     // 实力化Arcticle的model
     var art = new Arcticle({
-      md_value: md_value,
-      author: user
+      md_value,
+      title,
+      author: user,
+      createdTime,
+      updatedTime
     });
     var res = await art.save();
     ctx.body = {
